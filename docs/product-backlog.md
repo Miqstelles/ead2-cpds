@@ -11,10 +11,10 @@ Backlog ordenado por valor / dependencia. Sprints de 1 semana cada.
 | US03| sistema | carimbar mensagens com Lamport em producao/buffer/consumo  | garantir ordem parcial                   | 1      | DONE          |
 | US04| auditor | ler logs de producao e consumo                             | conferir entregas e ordem                | 1      | DONE          |
 | US05| sistema | armazenar mensagens em buffer identificando produtor       | rastreabilidade                          | 1      | DONE          |
-| US06| cliente | criar/subscrever/desinscrever em canais nomeados           | comunicacao em grupo                     | 2      | TODO          |
-| US07| cliente | enviar mensagem multicast em um canal                      | publicar a um grupo                      | 2      | TODO          |
-| US08| cliente | enviar broadcast a todos os registrados                    | difusao geral                            | 2      | TODO (testes) |
-| US09| cliente | consumir mensagens da minha fila (polling)                 | receber o que foi enviado                | 2      | DONE (basico) |
+| US06| cliente | criar/subscrever/desinscrever em canais nomeados           | comunicacao em grupo                     | 2      | DONE          |
+| US07| cliente | enviar mensagem multicast em um canal                      | publicar a um grupo                      | 2      | DONE          |
+| US08| cliente | enviar broadcast a todos os registrados                    | difusao geral                            | 2      | DONE          |
+| US09| cliente | consumir mensagens da minha fila (polling)                 | receber o que foi enviado                | 2      | DONE          |
 | US10| cliente | cifrar payload com PGP do destinatario                     | confidencialidade ponto-a-ponto          | 3      | TODO          |
 | US11| sistema | ter testes unitarios, integracao e E2E executados          | qualidade verificavel                    | 3      | EM ANDAMENTO  |
 | US12| usuario | ter README, docs de arquitetura, protocolo e testes        | manutenibilidade                         | 3      | EM ANDAMENTO  |

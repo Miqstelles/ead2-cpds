@@ -13,7 +13,7 @@ sockets TCP, com:
 - Integracao opcional com **PGP** (reuso do projeto `ead1-sgi/src/pgp_chat`) na
   Sprint 3.
 
-> **Status:** Sprint 1 entregue (núcleo + unicast). Sprints 2 e 3 a seguir.
+> **Status:** Sprints 1 e 2 entregues (núcleo + unicast + multicast + broadcast + canais). Sprint 3 (PGP) em andamento.
 
 ## Por que existe
 
