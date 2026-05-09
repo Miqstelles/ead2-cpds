@@ -124,9 +124,31 @@ bob.consume():
   permite que CONSUME entregue varias MSGs em sequencia.
 - **Broker descobre porta efemera quando port=0**: util em testes.
 
+## Camada de criptografia (Sprint 3)
+
+`mensageria.crypto_adapter.CryptoAdapter` encapsula o pacote `pgp_chat` do
+projeto irmao [`ead1-sgi`](../../ead1-sgi/). Reusa diretamente:
+
+- `pgp_chat.keys.generate_keypair`
+- `pgp_chat.keys.export_public_key` / `import_public_key`
+- `pgp_chat.messages.encrypt_and_sign`
+- `pgp_chat.messages.decrypt_and_verify`
+- `pgp_chat.storage.get_gpg`
+
+**Localizacao do pgp_chat** (no `crypto_adapter._bootstrap_pgp_chat`):
+1. `import pgp_chat` (caso instalado);
+2. variavel `PGP_CHAT_PATH`;
+3. caminho relativo `../ead1-sgi/src/` (default para o ambiente do aluno).
+
+**Quem cifra/decifra:** apenas remetente e destinatario. O **broker repassa
+o payload opaco** em ASCII-armored (`-----BEGIN PGP MESSAGE-----...`).
+O `production.log` registra `encrypted=true` e o tamanho do ciphertext, mas
+nunca o plaintext. Verificado pelo teste
+`test_crypto_e2e::test_broker_nao_decifra_payload`.
+
 ## Trabalhos futuros
 
-- Sprint 2: multicast/broadcast em testes de integracao (3+ clientes).
-- Sprint 3: integracao PGP (reuso de `pgp_chat`).
-- UDP para entrega "fire-and-forget".
+- UDP para entrega "fire-and-forget" (paralelo ao TCP de controle).
 - Replicacao de broker para tolerancia a falhas.
+- CLI com `--encrypt` (gestao integrada de keyrings).
+- Multicast IP (224.x.x.x) como alternativa ao fan-out via TCP.

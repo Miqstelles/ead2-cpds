@@ -15,9 +15,9 @@ Backlog ordenado por valor / dependencia. Sprints de 1 semana cada.
 | US07| cliente | enviar mensagem multicast em um canal                      | publicar a um grupo                      | 2      | DONE          |
 | US08| cliente | enviar broadcast a todos os registrados                    | difusao geral                            | 2      | DONE          |
 | US09| cliente | consumir mensagens da minha fila (polling)                 | receber o que foi enviado                | 2      | DONE          |
-| US10| cliente | cifrar payload com PGP do destinatario                     | confidencialidade ponto-a-ponto          | 3      | TODO          |
-| US11| sistema | ter testes unitarios, integracao e E2E executados          | qualidade verificavel                    | 3      | EM ANDAMENTO  |
-| US12| usuario | ter README, docs de arquitetura, protocolo e testes        | manutenibilidade                         | 3      | EM ANDAMENTO  |
+| US10| cliente | cifrar payload com PGP do destinatario                     | confidencialidade ponto-a-ponto          | 3      | DONE          |
+| US11| sistema | ter testes unitarios, integracao e E2E executados          | qualidade verificavel                    | 3      | DONE          |
+| US12| usuario | ter README, docs de arquitetura, protocolo e testes        | manutenibilidade                         | 3      | DONE          |
 
 ## Definicao de Pronto (DoD)
 

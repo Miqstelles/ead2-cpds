@@ -13,7 +13,7 @@ sockets TCP, com:
 - Integracao opcional com **PGP** (reuso do projeto `ead1-sgi/src/pgp_chat`) na
   Sprint 3.
 
-> **Status:** Sprints 1 e 2 entregues (núcleo + unicast + multicast + broadcast + canais). Sprint 3 (PGP) em andamento.
+> **Status:** Sprints 1, 2 e 3 entregues. Versao **v1.0.0**.
 
 ## Por que existe
 
@@ -26,7 +26,13 @@ Atende ao trabalho de mensageria do curso, considerando:
 ## Pre-requisitos
 
 - Python 3.9+
+- `gpg` (GnuPG) no PATH — apenas para os testes E2E com PGP
+  (`brew install gnupg` no macOS, `apt install gnupg` no Debian/Ubuntu).
 - `pip install -r requirements.txt`
+- O pacote `pgp_chat` do projeto irmao [`ead1-sgi`](../ead1-sgi/) e
+  localizado automaticamente pelo `crypto_adapter` (esperado em
+  `../ead1-sgi/src/pgp_chat/`). Como alternativa, defina
+  `PGP_CHAT_PATH` apontando para o diretorio `src` que contem o pacote.
 
 ## Como rodar
 
@@ -60,6 +66,45 @@ python3 -m mensageria.cli client --name alice --send-unicast bob "ola bob"
 python3 -m mensageria.cli client --name bob --consume
 ```
 
+### Envio cifrado (PGP fim-a-fim)
+
+A CLI nao expoe `--encrypt` na v1.0.0; o uso programatico via biblioteca
+e o seguinte (vide `tests/integration/test_crypto_e2e.py` para o padrao
+completo):
+
+```python
+from mensageria.client import Client
+from mensageria.crypto_adapter import CryptoAdapter
+
+# Setup uma unica vez por usuario
+alice = CryptoAdapter("alice", "/tmp/keyrings", "alice-pass")
+alice_fp = alice.generate_key("Alice", "alice@example.com")
+bob = CryptoAdapter("bob", "/tmp/keyrings", "bob-pass")
+bob_fp = bob.generate_key("Bob", "bob@example.com")
+
+# Trocar chaves publicas
+alice.import_pubkey(bob.export_pubkey())
+bob.import_pubkey(alice.export_pubkey())
+
+# Alice cifra e envia
+ciphertext = alice.encrypt_for(bob_fp, "saldo R$ 12.345,67")
+with Client("alice") as a:
+    a.register()
+    a.send_unicast("bob", ciphertext, encrypted=True)
+
+# Bob recebe e decifra
+with Client("bob") as b:
+    b.register()
+    msg = b.consume()[0]
+    result = bob.decrypt(msg.payload)
+    print(result["plaintext"])  # "saldo R$ 12.345,67"
+    print(result["valid"])       # True (assinatura conferida)
+```
+
+O **broker nao decifra**: o payload e roteado opaco em ASCII-armored, e
+o `production.log` registra apenas `encrypted=true` e o tamanho do
+ciphertext — nao o plaintext.
+
 ## Conferindo logs
 
 ```bash
@@ -80,7 +125,7 @@ iso_ts,lamport_prod,lamport_buf,msg_id,producer,target_type,target,encrypted,pay
 python3 -m pytest -v
 ```
 
-Saida esperada: `45 passed` (Sprint 1).
+Saida esperada: `65 passed` (Sprints 1+2+3).
 
 ## Estrutura
 
@@ -91,17 +136,20 @@ src/mensageria/
   protocol.py       # parser/formatter linha-orientado (estilo RTSP)
   buffer.py         # MessageBuffer (filas por cliente/canal)
   log_manager.py    # production.log + consumption.log
+  crypto_adapter.py # wrapper PGP (reuso de pgp_chat de ead1-sgi)
   broker.py         # servidor TCP + registry + roteamento
   client.py         # API cliente
   cli.py            # CLI broker/cliente
 tests/
-  unit/             # 35 testes
-  integration/      # 10 testes
+  unit/             # 37 testes
+  integration/      # 28 testes (registro, unicast, multicast, broadcast, canais, PGP E2E)
 docs/
   arquitetura.md
   protocolo.md
   product-backlog.md
   sprint-1.md
+  sprint-2.md
+  sprint-3.md
   protocolo-de-testes.md
 ```
 
@@ -111,4 +159,6 @@ docs/
 - [Protocolo](docs/protocolo.md)
 - [Product Backlog](docs/product-backlog.md)
 - [Sprint 1](docs/sprint-1.md)
+- [Sprint 2](docs/sprint-2.md)
+- [Sprint 3](docs/sprint-3.md)
 - [Protocolo de Testes](docs/protocolo-de-testes.md)
