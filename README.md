@@ -36,17 +36,33 @@ Atende ao trabalho de mensageria do curso, considerando:
 
 ## Como rodar
 
-### Subir o broker
+O pacote usa **layout src/** (boa pratica), entao Python precisa saber onde
+encontrar o modulo `mensageria`. Use uma das duas formas:
 
+**Opcao A — exportar PYTHONPATH (sem instalar nada):**
 ```bash
+export PYTHONPATH=src
 python3 -m mensageria.cli broker --host 127.0.0.1 --port 9000
 ```
+
+Ou inline em cada chamada:
+```bash
+PYTHONPATH=src python3 -m mensageria.cli broker --host 127.0.0.1 --port 9000
+```
+
+**Opcao B — instalar o pacote em modo editavel:**
+```bash
+pip install -e .
+mensageria broker --host 127.0.0.1 --port 9000
+```
+
+(Opcao B usa o entry point `mensageria` definido em `pyproject.toml`.)
 
 ### Subir clientes (em terminais separados)
 
 ```bash
-python3 -m mensageria.cli client --name alice --host 127.0.0.1 --port 9000 --repl
-python3 -m mensageria.cli client --name bob --host 127.0.0.1 --port 9000 --repl
+PYTHONPATH=src python3 -m mensageria.cli client --name alice --host 127.0.0.1 --port 9000 --repl
+PYTHONPATH=src python3 -m mensageria.cli client --name bob   --host 127.0.0.1 --port 9000 --repl
 ```
 
 No REPL do cliente:
@@ -62,8 +78,8 @@ bob> consume
 ### Ou modo nao-interativo
 
 ```bash
-python3 -m mensageria.cli client --name alice --send-unicast bob "ola bob"
-python3 -m mensageria.cli client --name bob --consume
+PYTHONPATH=src python3 -m mensageria.cli client --name alice --send-unicast bob "ola bob"
+PYTHONPATH=src python3 -m mensageria.cli client --name bob --consume
 ```
 
 ### Envio cifrado (PGP fim-a-fim)
