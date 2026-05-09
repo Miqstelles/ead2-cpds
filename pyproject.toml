@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mensageria"
+version = "0.1.0"
+description = "Solução de mensageria distribuída com Lamport clocks, message buffer, unicast/multicast/broadcast e PGP (reuso de pgp_chat)"
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [{ name = "Miqueias Telles" }]
+license = { text = "MIT" }
+dependencies = [
+    "python-gnupg>=0.5.2",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4",
+]
+
+[project.scripts]
+mensageria = "mensageria.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --tb=short"
