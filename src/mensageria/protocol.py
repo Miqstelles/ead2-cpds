@@ -116,12 +116,28 @@ def format_error(code: int, description: str) -> str:
     return f"{code} {description}{LINE_SEP}"
 
 
-def format_msg(msg_id: str, producer: str, target_type: str, lamport_prod: int, lamport_buf: int, encrypted: bool, payload_b64: str) -> str:
+def format_msg(
+    msg_id: str,
+    producer: str,
+    target_type: str,
+    lamport_prod: int,
+    lamport_buf: int,
+    encrypted: bool,
+    payload_b64: str,
+    channel: Optional[str] = None,
+) -> str:
     enc = "true" if encrypted else "false"
-    head = (
-        f"{MSG} msg_id={msg_id} producer={producer} target_type={target_type} "
-        f"lamport_prod={lamport_prod} lamport_buf={lamport_buf} encrypted={enc}"
-    )
+    parts = [
+        f"msg_id={msg_id}",
+        f"producer={producer}",
+        f"target_type={target_type}",
+        f"lamport_prod={lamport_prod}",
+        f"lamport_buf={lamport_buf}",
+        f"encrypted={enc}",
+    ]
+    if channel:
+        parts.append(f"channel={channel}")
+    head = f"{MSG} " + " ".join(parts)
     return f"{head}{LINE_SEP}{payload_b64}{LINE_SEP}{END}{LINE_SEP}"
 
 

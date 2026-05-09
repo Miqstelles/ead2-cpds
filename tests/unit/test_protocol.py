@@ -52,6 +52,33 @@ def test_format_msg_termina_com_END():
     assert s.endswith("END\n")
 
 
+def test_format_msg_inclui_channel_quando_multicast():
+    s = protocol.format_msg(
+        msg_id="abc",
+        producer="alice",
+        target_type="MULTICAST",
+        lamport_prod=1,
+        lamport_buf=2,
+        encrypted=False,
+        payload_b64="Zg==",
+        channel="trading",
+    )
+    assert "channel=trading" in s
+
+
+def test_format_msg_omite_channel_quando_nao_informado():
+    s = protocol.format_msg(
+        msg_id="abc",
+        producer="alice",
+        target_type="UNICAST",
+        lamport_prod=1,
+        lamport_buf=2,
+        encrypted=False,
+        payload_b64="Zg==",
+    )
+    assert "channel=" not in s
+
+
 def test_parse_bool():
     assert protocol.parse_bool("true") is True
     assert protocol.parse_bool("True") is True

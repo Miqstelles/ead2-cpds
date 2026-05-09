@@ -179,10 +179,21 @@ class Client:
         if end != protocol.END:
             raise ClientError(f"esperava END, recebi {end!r}")
         payload_text = base64.b64decode(payload_b64.encode("ascii")).decode("utf-8")
+        target_type = params["target_type"]
+        # Reconstroi target a partir do contexto:
+        #   - UNICAST: o destinatario somos nos
+        #   - MULTICAST: canal vem em params["channel"]
+        #   - BROADCAST: nao tem target especifico
+        if target_type == UNICAST:
+            target: Optional[str] = self.name
+        elif target_type == MULTICAST:
+            target = params.get("channel", "<channel>")
+        else:
+            target = None
         msg = Message(
             producer=params["producer"],
-            target_type=params["target_type"],
-            target=None if params["target_type"] == BROADCAST else "<consumed>",
+            target_type=target_type,
+            target=target,
             payload=payload_text,
             lamport_produced=int(params["lamport_prod"]),
             encrypted=protocol.parse_bool(params.get("encrypted", "false")),
@@ -193,10 +204,4 @@ class Client:
         cons_ts = self.clock.receive(msg.lamport_buffered or 0)
         msg.lamport_consumed = cons_ts
         msg.consumer = self.name
-        # Restaurar target real para multicast/unicast quando informacao chegou
-        if msg.target_type == UNICAST:
-            msg.target = self.name
-        elif msg.target_type == MULTICAST:
-            # canal nao chega no MSG; deixamos como o nome generico
-            msg.target = "<channel>"
         return msg

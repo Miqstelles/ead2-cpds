@@ -249,6 +249,7 @@ class Broker:
             cons_ts = self.clock.receive(m.lamport_buffered or 0)
             self.log_manager.log_consumption(m, current_name, cons_ts)
             payload_b64 = base64.b64encode(m.payload.encode("utf-8")).decode("ascii")
+            channel = m.target if m.target_type == MULTICAST else None
             out_lines.append(
                 protocol.format_msg(
                     msg_id=m.msg_id,
@@ -258,6 +259,7 @@ class Broker:
                     lamport_buf=m.lamport_buffered or 0,
                     encrypted=m.encrypted,
                     payload_b64=payload_b64,
+                    channel=channel,
                 )
             )
         return ("".join(out_lines), current_name)
